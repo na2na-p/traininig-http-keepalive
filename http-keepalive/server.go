@@ -20,7 +20,7 @@ func main() {
 		Addr:         ":8080",
 		ReadTimeout:  3 * time.Second,
 		WriteTimeout: 3 * time.Second,
-		IdleTimeout:  1 * time.Millisecond,
+		IdleTimeout:  5 * time.Second,
 	}
 
 	fmt.Println("Starting server on :8080")
