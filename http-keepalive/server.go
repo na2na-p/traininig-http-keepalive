@@ -17,10 +17,10 @@ func main() {
 	http.HandleFunc("/", handler)
 
 	server := &http.Server{
-		Addr:         ":8080",
-		ReadTimeout:  3 * time.Second,
-		WriteTimeout: 3 * time.Second,
-		IdleTimeout:  5 * time.Second,
+		Addr:        ":8080",
+		ReadTimeout: 1 * time.Second,
+		//WriteTimeout: 3 * time.Second,
+		IdleTimeout: 3 * time.Second,
 	}
 
 	fmt.Println("Starting server on :8080")

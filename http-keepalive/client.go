@@ -12,9 +12,8 @@ func main() {
 	client := &http.Client{
 		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
-			MaxIdleConns:      10,
-			IdleConnTimeout:   30 * time.Second,
-			DisableKeepAlives: false,
+			MaxIdleConns:    10,
+			IdleConnTimeout: 30 * time.Second,
 		},
 	}
 
@@ -35,6 +34,6 @@ func main() {
 		}
 
 		fmt.Printf("Response %d: %s\n", i, body)
-		time.Sleep(1 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 }
