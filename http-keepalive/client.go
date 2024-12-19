@@ -10,14 +10,14 @@ import (
 func main() {
 
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 50 * time.Second,
 		Transport: &http.Transport{
 			MaxIdleConns:    10,
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
 
-	url := "http://localhost:8080"
+	url := "http://localhost:49755"
 
 	for i := 1; i <= 3; i++ {
 		resp, err := client.Get(url)

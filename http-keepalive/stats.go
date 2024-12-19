@@ -9,24 +9,28 @@ import (
 	"github.com/tcnksm/go-httpstat"
 )
 
-const SLEEP_TIME_MICROSECONDS = 100
+const (
+	URL           = "http://35.243.94.80/"
+	SleepTime     = 1000 * time.Millisecond
+	ClientTimeout = 50 * time.Second
+	TryCount      = 100
+)
 
 func main() {
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: ClientTimeout,
 		Transport: &http.Transport{
 			MaxIdleConns:    10,
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
 
-	url := "http://localhost:54688"
-	fmt.Printf("Sleep duration: %d ms\n", SLEEP_TIME_MICROSECONDS)
+	fmt.Printf("Sleep duration: %d ms\n", SleepTime.Milliseconds())
 
-	for i := 1; i <= 3; i++ {
+	for i := 1; i <= TryCount; i++ {
 		var result httpstat.Result
 
-		req, err := http.NewRequest("GET", url, nil)
+		req, err := http.NewRequest("GET", URL, nil)
 		if err != nil {
 			fmt.Printf("Request %d creation failed: %v\n", i, err)
 			continue
@@ -54,7 +58,7 @@ func main() {
 		fmt.Printf("DNS Lookup:    %d µs\n", result.DNSLookup.Microseconds())
 		fmt.Printf("TCP Connection:%d µs\n", result.TCPConnection.Microseconds())
 		fmt.Printf("TLS Handshake: %d µs\n", result.TLSHandshake.Microseconds())
-		fmt.Printf("Server Processing: %d µs\n", result.ServerProcessing.Microseconds())
+		fmt.Printf("Server Processing: %d ms\n", result.ServerProcessing.Milliseconds())
 
 		fmt.Printf("Name Lookup:    %d µs\n", result.NameLookup.Microseconds())
 		fmt.Printf("Connect:        %d µs\n", result.Connect.Microseconds())
@@ -62,6 +66,6 @@ func main() {
 		fmt.Printf("Start Transfer: %d µs\n", result.StartTransfer.Microseconds())
 		fmt.Println("--------------------")
 
-		time.Sleep(SLEEP_TIME_MICROSECONDS * time.Millisecond)
+		time.Sleep(SleepTime)
 	}
 }

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-keepalive-server
+  labels:
+    app: http-keepalive-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-keepalive-server
+  template:
+    metadata:
+      labels:
+        app: http-keepalive-server
+    spec:
+      terminationGracePeriodSeconds: 70
+      containers:
+        - name: server
+          image: registry.na2na.dev/testing/http-keepalive-server:testing-12182230
+          ports:
+            - containerPort: 8080
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sleep","20"]
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          readinessProbe: # Readiness Probe
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 3 # 初回プローブまでの待機時間
+            periodSeconds: 5       # プローブの実行間隔
+            timeoutSeconds: 1      # プローブのタイムアウト時間
+            successThreshold: 1    # 成功と見なす連続成功回数
+            failureThreshold: 3    # 失敗と見なす連続失敗回数
+          livenessProbe: # Liveness Probe
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10 # 初回プローブまでの待機時間
+            periodSeconds: 5        # プローブの実行間隔
+            timeoutSeconds: 1       # プローブのタイムアウト時間
+            failureThreshold: 3     # 失敗と見なす連続失敗回数
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-keepalive-service
+spec:
+  selector:
+    app: http-keepalive-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
